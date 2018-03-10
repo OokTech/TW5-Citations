@@ -1,0 +1,10 @@
+caption: Selected Citations BibTex
+created: 20150211015009814
+modified: 20150211020128946
+tags:
+title: $:/plugins/OokTech/Citations/Selected Citations BibTex
+
+<textarea rows="20" style='width:100%'><$list filter='[tag[Citations]on_list[true]]'><$list filter='[{!!bibtex_tiddler}get[text]]'><<currentTiddler>>
+
+</$list></$list>
+</textarea>

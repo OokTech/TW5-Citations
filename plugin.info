@@ -1,0 +1,10 @@
+{
+	"title": "$:/plugins/OokTech/Citations",
+	"description": "A basic citation tracker for TiddlyWiki",
+	"author": "OokTech",
+	"version": "0.2.15",
+	"core-version": ">=5.1.6",
+	"source": "https://github.com/OokTech/TW5-NoLearningRequired-Full",
+	"plugin-type": "plugin",
+  "list": "readme"
+}

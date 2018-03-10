@@ -1,0 +1,44 @@
+caption: Selected Citations
+tags:
+title: $:/plugins/OokTech/Citations/Selected Citations
+
+\define thisCitationEntry()
+<tr>
+  <td>
+    <$checkbox
+      tiddler=<<currentCitation>>
+      field='on_list'
+      checked='true'
+      unchecked='false'
+    />
+  </td>
+  <td>
+    <$link
+      to=<<currentCitation>>
+    >
+      <$view
+        tiddler=<<currentCitation>>
+        field='title'
+      />
+    </$link>
+  </td>
+</tr>
+\end
+
+This is the list of currently selected citations whose ~BibTex entries will be displayed in the ~BibTex List tab.
+
+<table>
+  <tr>
+    <th>
+      Remove from list
+    </th>
+    <th>
+      Citation
+    </th>
+  </tr>
+  <$list
+    filter='[tag[Citations]on_list[true]]'
+  >
+    <<thisCitationEntry>>
+  </$list>
+</table>

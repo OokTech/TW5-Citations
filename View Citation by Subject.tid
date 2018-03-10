@@ -1,0 +1,118 @@
+caption: View Citation by Subject
+creator: OokTech
+no_edit: true
+title: $:/plugins/OokTech/Citations/View Citation by Subject
+
+\define thisNoteTiddler()
+<$list
+  filter='[<CitationTiddler>!has[note_tiddler]]'
+>
+  <$button>
+    Create Note Tiddler
+    <$action-setfield
+      $tiddler=<<thisNoteTiddlerName>>
+      text=''
+    />
+    <$action-setfield
+      $tiddler=<<CitationTiddler>>
+      note_tiddler=<<thisNoteTiddlerName>>
+    />
+  </$button>
+</$list>
+<$list
+  filter='[<CitationTiddler>has[note_tiddler]]'
+>
+  <$edit-text
+    tiddler={{!!note_tiddler}}
+    class='tc-edit-texteditor'
+    minHeight={{$:/state/viewcitation/noteheight}}
+    placeholder='Citation Notes'
+  />
+</$list>
+\end
+
+\define thisNoteTiddlerName()
+$(CitationTiddler)$_notes
+\end
+
+Subject:
+<$select
+  tiddler='$:/state/viewcitation/subject'
+  default='No Subject'
+>
+  <$list
+    filter='[tag[CitationsSubject]sort[title]]'
+  >
+    <option
+      value=<<currentTiddler>>
+    >
+      <$view
+        field='title'
+      />
+    </option>
+  </$list>
+</$select>
+Note area height:
+<$select
+  tiddler='$:/state/viewcitation/noteheight'
+>
+  <$list
+    filter='50px 100px 200px 300px 400px 500px 600px 700px'
+  >
+    <option>
+      <<currentTiddler>>
+    </option>
+  </$list>
+</$select>
+
+Citation:
+<$select
+  tiddler='$:/state/viewcitation/citationbysubject'
+>
+  <$list
+    filter='[tag[Citations]sort[title]]'
+    variable=currentCitation
+  >
+    <$list
+      filter='[title<currentCitation>get[subject_tiddler]]'
+      variable=subjectsTiddler
+    >
+      <$list
+        filter='[title<subjectsTiddler>indexes[]]'
+      ><!-- variable=currentSubject>-->
+        <$list
+          filter='[title{$:/state/viewcitation/subject}is[current]]'
+        >
+          <option>
+            <$view
+              tiddler=<<currentCitation>>
+              field='title'
+            />
+          </option>
+        </$list>
+      </$list>
+    </$list>
+  </$list>
+</$select>
+
+<$set
+  name=CitationTiddler
+  value={{$:/state/viewcitation/citationbysubject}}
+>
+  <table
+    style='width:100%'
+  >
+    <tr>
+      <td
+        style='width:50%;height:100%;'
+      >
+        <<thisNoteTiddler>>
+      </td>
+      <td>
+        <$transclude
+          tiddler=<<CitationTiddler>> mode='block'
+        />
+      </td>
+    </tr>
+  </table>
+</$set>

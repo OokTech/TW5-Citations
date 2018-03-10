@@ -1,0 +1,219 @@
+caption: Add Citation
+no_edit: true
+title: $:/plugins/OokTech/Citations/Add Citation
+
+\define thisGetIndex()
+$:/temp/AddCitation/SubjectsList##$(ThisTiddler)$
+\end
+
+\define makeCitationText()
+
+Subjects:
+
+<ul>
+<$list filter='[[$(subjectsTiddler)$]indexes[]]'>
+<li><$view field='title'/></li>
+</$list>
+</ul>
+
+Abstract:<br>
+
+<$view tiddler="""$(abstractTiddler)$""" field='text'/>
+
+Bibtex:
+
+---
+
+$(bibTex)$
+
+---
+
+\end
+
+\define makeAbstractTiddler()
+$(tiddlerTitle)$_Abstract
+\end
+
+\define makeBibTexTiddler()
+$(tiddlerTitle)$_BibTex
+\end
+
+\define makeSubjectsTiddler()
+$(tiddlerTitle)$_Subjects
+\end
+
+\define getBibTex()
+<$macrocall $name=monoSpacedCodeBlock src={{$(bibTexTiddler)$}}/>
+\end
+
+Paper Title: <$edit-text class='tc-edit-texteditor' tiddler='$:/state/addcitation' field='paper_title' placeholder='papertitle' size=70/><br>
+
+Abstract:<br> <$edit-text class='tc-edit-texteditor' tiddler='$:/state/addcitation' placeholder='Abstract'/>
+
+Bibtex Citation:<br> <$edit-text class='tc-edit-texteditor' tiddler='$:/state/addcitation/bibtex' placeholder='BibTex Citation'/>
+
+<$vars
+  tiddlerTitle={{$:/state/addcitation!!paper_title}}
+  abstractTiddler=<<makeAbstractTiddler>>
+  bibTexTiddler=<<makeBibTexTiddler>>
+  subjectsTiddler=<<makeSubjectsTiddler>>
+  bibTex=<<getBibTex>>
+>
+  <$reveal
+    type='nomatch'
+    state='$:/state/addcition/addsubject'
+    text='newsubject'
+  >
+    Subject:
+    <$select
+      tiddler='$:/state/addcitation/subject'
+      default='No Subject'
+    >
+      <$list
+        filter='[tag[CitationsSubject]]'
+      >
+        <option
+          value=<<currentTiddler>>
+        >
+          <$view
+            field='title'
+          />
+        </option>
+      </$list>
+    </$select>
+    <$button>
+      Add Subject
+      <$action-setfield
+        $tiddler='$:/temp/AddCitation/SubjectsList'
+        $index={{$:/state/addcitation/subject}}
+        $value='1'
+      />
+    </$button>
+    <$button
+      set='$:/state/addcition/addsubject'
+      setTo='newsubject'
+    >
+      New Subject
+    </$button>
+  </$reveal>
+  <$reveal
+    type='match'
+    state='$:/state/addcition/addsubject'
+    text='newsubject'
+  >
+    Subject Name:
+    <$edit-text
+      class='tc-edit-texteditor'
+      tiddler='$:/state/addcition/addsubject'
+      field='newsubjectname'
+    />
+    <br>
+    <$button>
+      Add Subject
+      <$action-setfield
+        $tiddler={{$:/state/addcition/addsubject!!newsubjectname}}
+        tags=CitationsSubject
+      />
+      <$action-setfield
+        $tiddler='$:/state/addcition/addsubject'
+        $field='newsubjectname'
+        $value=''
+      />
+    </$button>
+    <$button
+      set='$:/state/addcition/addsubject'
+      setTo='nonewsubject'
+    >
+      Done
+    </$button>
+  </$reveal>
+
+  Current Subjects:
+
+  <ul>
+    <$list
+      filter='[[$:/temp/AddCitation/SubjectsList]indexes[]]'
+    >
+      <$set
+        name=ThisTiddler
+        value=<<currentTiddler>>
+      >
+        <li>
+          <$view
+            field='title'
+          />
+          <$button
+            set=<<thisGetIndex>>
+          >
+            Remove Subject
+          </$button>
+        </li>
+      </$set>
+    </$list>
+  </ul>
+
+  <$button>
+    Add Citation
+    <$action-setfield
+      $tiddler=<<abstractTiddler>>
+      text={{$:/state/addcitation}}
+    />
+    <$action-setfield
+      $tiddler=<<bibTexTiddler>>
+      text={{$:/state/addcitation/bibtex}}
+    />
+    <$action-setfield
+      $tiddler='$:/temp/AddCitation/SubjectsList'
+      $field='title'
+      $value=<<makeSubjectsTiddler>>
+    />
+    <$action-setfield
+      $tiddler=<<tiddlerTitle>>
+      text=<<makeCitationText>>
+    />
+    <$action-setfield
+      $tiddler=<<tiddlerTitle>>
+      tags='Citations'
+    />
+    <$action-setfield
+      $tiddler=<<tiddlerTitle>>
+      subject_tiddler=<<subjectsTiddler>>
+      bibtex_tiddler=<<bibTexTiddler>>
+      abstract_tiddler=<<abstractTiddler>>
+    />
+    <$action-setfield
+      $tiddler='$:/state/addcitation'
+      text=''
+    />
+    <$action-setfield
+      $tiddler='$:/state/addcitation'
+      $field='paper_title'
+      $value=''
+    />
+    <$action-setfield
+      $tiddler='$:/state/addcitation/bibtex'
+      text=''
+    />
+  </$button>
+  <$button>
+    Clear Form
+    <$action-setfield
+      $tiddler='$:/state/addcitation'
+      text=''
+    />
+    <$action-setfield
+      $tiddler='$:/state/addcitation'
+      $field='paper_title'
+      $value=''
+    />
+    <$action-setfield
+      $tiddler='$:/state/addcitation/bibtex'
+      text=''
+    />
+    <$action-setfield
+      $tiddler="""I hope you don't name a tiddler this"""
+      $field='title'
+      $value="""$:/temp/AddCitation/SubjectsList"""
+    />
+  </$button>
+</$vars>

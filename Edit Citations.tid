@@ -1,0 +1,163 @@
+caption: Edit Citations
+no_edit: true
+title: $:/plugins/OokTech/Citations/Edit Citations
+
+\define thisEditSubjects()
+<li><$view field='title'/> <$button set='$(subjectTiddler)$##$(currentSubject)$'>Remove Subject</$button></li>
+\end
+
+<table>
+<tr><th>List of all tiddlers </th></tr>
+<tr>
+<td>
+<$select tiddler='$:/state/CitationsLibrary/EditCitations/SelectedCitation'>
+<$list filter='[tag[Citations]]'>
+<option><$view field='title'/></option>
+</$list>
+</$select>
+</td>
+</tr>
+<tr><th>List by subject</th></tr>
+<tr>
+<td>
+<$select tiddler='$:/state/CitationsLibrary/EditCitations/SelectedCitation'>
+<$list filter='[tag[Citations]get[subject_tiddler]indexes[]]' variable=subjectsTiddler>
+<optgroup label=<<subjectsTiddler>>>
+<$list filter='[tag[Citations]]' variable=currentCitation>
+<$list filter='[title<currentCitation>get[subject_tiddler]]' variable=innerSubjectsTiddler>
+<$list filter='[title<innerSubjectsTiddler>indexes[]]'>
+<$list filter='[title<subjectsTiddler>is[current]]'>
+<option><$view tiddler=<<currentCitation>> field='title'/></option>
+</$list>
+</$list>
+</$list>
+</$list>
+</optgroup>
+</$list>
+</$list>
+</$select>
+</td>
+</tr>
+<tr><th>Abstract Tiddler</th></tr>
+<tr><td><$edit-text tiddler={{$:/state/CitationsLibrary/EditCitations/SelectedCitation}} field='abstract_tiddler' class='tc-edit-texteditor'/></td></tr>
+<tr><th>Bibtex Tiddler</th></tr>
+<tr><td><$edit-text tiddler={{$:/state/CitationsLibrary/EditCitations/SelectedCitation}} field='bibtex_tiddler' class='tc-edit-texteditor'/></td></tr>
+<tr><th>Note Tiddler</th></tr>
+<tr><td><$edit-text tiddler={{$:/state/CitationsLibrary/EditCitations/SelectedCitation}} field='note_tiddler' class='tc-edit-texteditor'/></td></tr>
+<tr><th>Subject Tiddler</th></tr>
+<tr><td><$edit-text tiddler={{$:/state/CitationsLibrary/EditCitations/SelectedCitation}} field='subject_tiddler' class='tc-edit-texteditor'/></td></tr>
+</table>
+
+Citation Title: {{$:/state/CitationsLibrary/EditCitations/SelectedCitation}}
+
+<$tiddler
+  tiddler={{$:/state/CitationsLibrary/EditCitations/SelectedCitation}}
+>
+  Abstract:
+  <$edit-text
+    tiddler={{!!abstract_tiddler}}
+    class='tc-edit-texteditor'
+  />
+
+  Bibtex:
+  <$edit-text
+    tiddler={{!!bibtex_tiddler}}
+    class='tc-edit-texteditor'
+  />
+
+  Notes:
+  <$edit-text
+    tiddler={{!!note_tiddler}}
+    class='tc-edit-texteditor'
+  />
+
+  Subjects:
+
+  <$reveal
+    type='nomatch'
+    state='$:/state/editcition/addsubject'
+    text='newsubject'
+  >
+    Subject:
+    <$select
+      tiddler='$:/state/editcitation/subject'
+      default='No Subject'
+    >
+      <$list
+        filter='[tag[CitationsSubject]]'
+      >
+        <option
+          value=<<currentTiddler>>
+        >
+          <$view
+            field='title'
+          />
+        </option>
+      </$list>
+    </$select>
+    <$button>
+      Add Subject
+      <$action-setfield
+        $tiddler={{!!subject_tiddler}}
+        $index={{$:/state/editcitation/subject}}
+        $value='1'
+      />
+    </$button>
+    <$button
+      set='$:/state/editcition/addsubject'
+      setTo='newsubject'
+    >
+      New Subject
+    </$button>
+  </$reveal>
+  <$reveal
+    type='match'
+    state='$:/state/editcition/addsubject'
+    text='newsubject'
+  >
+    Subject Name:
+    <$edit-text
+      class='tc-edit-texteditor'
+      tiddler='$:/state/editcition/addsubject'
+      field='newsubjectname'
+    />
+    <br>
+    <$button>
+      Add Subject
+      <$action-setfield
+        $tiddler={{$:/state/editcition/addsubject!!newsubjectname}}
+        tags=CitationsSubject
+      />
+      <$action-setfield
+        $tiddler='$:/state/editcition/addsubject'
+        $field='newsubjectname'
+        $value=''
+      />
+    </$button>
+    <$button
+      set='$:/state/editcition/addsubject'
+      setTo='nonewsubject'
+    >
+      Done
+    </$button>
+  </$reveal>
+
+  <$set
+    name=subjectTiddler
+    value={{!!subject_tiddler}}
+  >
+    <ul>
+      <$list
+        filter='[{!!subject_tiddler}indexes[]]'
+      >
+        <$set
+          name=currentSubject
+          value=<<currentTiddler>>
+        >
+          <<thisEditSubjects>>
+        </$set>
+      </$list>
+    </ul>
+  </$set>
+
+</$tiddler>

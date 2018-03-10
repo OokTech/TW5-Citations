@@ -1,0 +1,8 @@
+tags: $:/tags/Macro
+title: $:/plugins/OokTech/Citations/Citations Macros
+
+\define monoSpacedCodeBlock(src)
+```
+$src$
+```
+\end

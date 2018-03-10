@@ -1,0 +1,72 @@
+no_edit: true
+title: $:/plugins/OokTech/Citations/Upgrade Citations from 0.1.x to 0.2.x
+
+\define makeCitationText()
+
+Subjects:
+
+<ul>
+<$list filter='[[$(subjectsTiddler)$]indexes[]]'>
+<li><$view field='title'/></li>
+</$list>
+</ul>
+
+Abstract:<br>
+
+<$view tiddler="""$(abstractTiddler)$""" field='text'/>
+
+Bibtex:
+
+---
+
+$(bibTex)$
+
+---
+
+\end
+
+\define thisMakeBibtexTiddler()
+
+$(currentTitle)$_BibTex
+
+\end
+
+\define thisMakeAbstractTiddler()
+
+$(currentTitle)$_Abstract
+
+\end
+
+\define thisMakeSubjectTiddler()
+
+$(currentTitle)$_Subject
+
+\end
+
+\define getBibTex()
+<$macrocall $name=monoSpacedCodeBlock src={{$(bibTexTiddler)$}}/>
+\end
+
+<$select tiddler='$:/state/UpgradeCitation/selectedtiddler'>
+<$list filter='[tag[Citations]has[subject]]'>
+<option><$view field='title'/></option>
+</$list>
+</$select>
+
+<$tiddler tiddler={{$:/state/UpgradeCitation/selectedtiddler}}>
+<$set name=currentTitle value=<<currentTiddler>>>
+<$set name=bibTexTiddler value=<<thisMakeBibtexTiddler>>>
+<$set name=subjectsTiddler value=<<thisMakeSubjectTiddler>>>
+<$set name=bibTex value=<<getBibTex>>>
+<$set name=abstractTiddler value=<<thisMakeAbstractTiddler>>>
+<$button>Upgrade
+<$action-setfield bibtex_tiddler=<<thisMakeBibtexTiddler>> abstract_tiddler=<<thisMakeAbstractTiddler>> subject_tiddler=<<thisMakeSubjectTiddler>>/>
+<$action-setfield $tiddler=<<thisMakeSubjectTiddler>> $index={{!!subject}} $value=1/>
+<$action-setfield text=<<makeCitationText>>/>
+</$button>
+</$set>
+</$set>
+</$set>
+</$set>
+</$set>
+</$tiddler>
